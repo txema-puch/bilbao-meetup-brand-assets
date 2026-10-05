@@ -17,7 +17,7 @@ import ffmpegPath from 'ffmpeg-static';
 import sharp from 'sharp';
 import { ROOT, brandFont } from './lib/assets.mjs';
 import { liveScreens } from './scenes/live.mjs';
-import { socialPosts } from './scenes/social.mjs';
+import { socialPosts, socialVideos } from './scenes/social.mjs';
 import { posterScene, POSTER } from './scenes/print.mjs';
 import { svgToPdf } from './lib/pdf.mjs';
 
@@ -177,7 +177,7 @@ async function main() {
   const terms = filter.split(',').filter(Boolean);
   const inc = terms.filter(t => !t.startsWith('!')), exc = terms.filter(t => t.startsWith('!')).map(t => t.slice(1));
   if (cmd === 'print') return renderPrint();
-  const all = cmd === 'video' ? liveScreens() : [...liveScreens(), ...socialPosts()];
+  const all = cmd === 'video' ? [...liveScreens(), ...socialVideos()] : [...liveScreens(), ...socialPosts()];
   const jobs = all.filter(j => (!inc.length || inc.some(t => j.id.includes(t))) && !exc.some(t => j.id.includes(t)));
   if (!jobs.length) { console.error(`no deliverable matches "${filter}"`); process.exit(1); }
   if (cmd === 'stills') await pool(jobs, jobsFlag, (p, j) => renderStill(p, j));
